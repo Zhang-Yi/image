@@ -5,7 +5,7 @@ class ComponentData {
   int maxHSamples;
   int vSamples;
   int maxVSamples;
-  List<Uint8List> lines;
+  List<Uint8List?> lines;
   int hScaleShift;
   int vScaleShift;
   ComponentData(this.hSamples, this.maxHSamples, this.vSamples,

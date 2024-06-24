@@ -2,66 +2,98 @@ import 'dart:io';
 import 'package:image/image.dart';
 import 'package:test/test.dart';
 
+import 'paths.dart';
+
 void main() {
   group('PNG', () {
     test('encode', () {
-      Image image = Image(64, 64);
+      final image = Image(64, 64);
       image.fill(getColor(100, 200, 255));
 
       // Encode the image to PNG
-      List<int> png = PngEncoder().encodeImage(image);
-      File('.dart_tool/out/png/encode.png')
+      final png = PngEncoder().encodeImage(image);
+      File('$tmpPath/out/png/encode.png')
         ..createSync(recursive: true)
         ..writeAsBytesSync(png);
     });
 
+    test('decodeAnimation', () {
+      var files = [
+        ['test/res/png/apng/test_apng.png', 2, 'test_apng'],
+        ['test/res/png/apng/test_apng2.png', 60, 'test_apng2'],
+        ['test/res/png/apng/test_apng3.png', 19, 'test_apng3'],];
+
+      for (var f in files)
+      {
+        final bytes = File(f[0] as String).readAsBytesSync();
+        final anim = PngDecoder().decodeAnimation(bytes)!;
+        expect(anim.length, equals(f[1]));
+
+        /*for (var i = 0; i < anim.length; ++i) {
+          final png = PngEncoder().encodeImage(anim[i]);
+          File('$tmpPath/out/png/${f[2] as String}-$i.png')
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(png);
+        }*/
+      }
+    });
+
     test('encodeAnimation', () {
-      Animation anim = Animation();
+      final anim = Animation();
       anim.loopCount = 10;
       for (var i = 0; i < 10; i++) {
-        Image image = Image(480, 120);
+        final image = Image(480, 120);
         drawString(image, arial_48, 100, 60, i.toString());
         anim.addFrame(image);
       }
 
-      List<int> png = encodePngAnimation(anim);
-      File('.dart_tool/out/png/encodeAnimation.png')
+      final png = encodePngAnimation(anim)!;
+      File('$tmpPath/out/png/encodeAnimation.png')
         ..createSync(recursive: true)
         ..writeAsBytesSync(png);
     });
 
+    test('textData', () {
+      final img = Image(16, 16, textData: {"foo":"bar"});
+      final png = PngEncoder().encodeImage(img);
+      final img2 = PngDecoder().decodeImage(png);
+      expect(img2?.width, equals(img.width));
+      expect(img2?.textData?["foo"], equals("bar"));
+    });
+
     test('decode', () {
-      List<int> bytes = File('.dart_tool/out/png/encode.png').readAsBytesSync();
-      Image image = PngDecoder().decodeImage(bytes);
+      final List<int> bytes =
+          File('$tmpPath/out/png/encode.png').readAsBytesSync();
+      final image = PngDecoder().decodeImage(bytes)!;
 
       expect(image.width, equals(64));
       expect(image.height, equals(64));
-      var c = getColor(100, 200, 255);
-      for (int i = 0, len = image.length; i < len; ++i) {
+      final c = getColor(100, 200, 255);
+      for (var i = 0, len = image.length; i < len; ++i) {
         expect(image[i], equals(c));
       }
 
-      List<int> png = PngEncoder().encodeImage(image);
-      File('.dart_tool/out/png/decode.png').writeAsBytesSync(png);
+      final png = PngEncoder().encodeImage(image);
+      File('$tmpPath/out/png/decode.png').writeAsBytesSync(png);
     });
 
     test('iCCP', () {
       final bytes = File('test/res/png/iCCP.png').readAsBytesSync();
-      final image = PngDecoder().decodeImage(bytes);
+      final image = PngDecoder().decodeImage(bytes)!;
       expect(image.iccProfile, isNotNull);
-      expect(image.iccProfile.data, isNotNull);
+      expect(image.iccProfile!.data, isNotNull);
 
       final png = PngEncoder().encodeImage(image);
 
-      final image2 = PngDecoder().decodeImage(png);
+      final image2 = PngDecoder().decodeImage(png)!;
       expect(image2.iccProfile, isNotNull);
-      expect(image2.iccProfile.data, isNotNull);
-      expect(
-          image2.iccProfile.data.length, equals(image.iccProfile.data.length));
+      expect(image2.iccProfile!.data, isNotNull);
+      expect(image2.iccProfile!.data.length,
+          equals(image.iccProfile!.data.length));
     });
 
-    Directory dir = Directory('test/res/png');
-    var files = dir.listSync();
+    final dir = Directory('test/res/png');
+    final files = dir.listSync();
 
     for (var f in files) {
       if (f is! File || !f.path.endsWith('.png')) {
@@ -94,32 +126,35 @@ void main() {
       //      interlacing:
       //        n - non-interlaced
       //        i - interlaced
-      String name = f.path.split(RegExp(r'(/|\\)')).last;
+      final name = f.path.split(RegExp(r'(/|\\)')).last;
 
       test('PNG $name', () {
-        File file = f as File;
+        final file = f;
 
         // x* png's are corrupted and are supposed to crash.
         if (name.startsWith('x')) {
           try {
-            var image = PngDecoder().decodeImage(file.readAsBytesSync());
+            final image = PngDecoder().decodeImage(file.readAsBytesSync());
             expect(image, isNull);
           } catch (e) {
-            ;
+            // noop
           }
         } else {
-          Animation anim = decodeAnimation(file.readAsBytesSync());
-          if (anim.length == 1) {
-            List<int> png = PngEncoder().encodeImage(anim[0]);
-            File('.dart_tool/out/png/${name}')
-              ..createSync(recursive: true)
-              ..writeAsBytesSync(png);
-          } else {
-            for (int i = 0; i < anim.length; ++i) {
-              List<int> png = PngEncoder().encodeImage(anim[i]);
-              File('.dart_tool/out/png/${name}-$i.png')
+          final anim = decodeAnimation(file.readAsBytesSync());
+          expect(anim, isNotNull);
+          if (anim != null) {
+            if (anim.length == 1) {
+              final png = PngEncoder().encodeImage(anim[0]);
+              File('$tmpPath/out/png/$name')
                 ..createSync(recursive: true)
                 ..writeAsBytesSync(png);
+            } else {
+              for (var i = 0; i < anim.length; ++i) {
+                final png = PngEncoder().encodeImage(anim[i]);
+                File('$tmpPath/out/png/$name-$i.png')
+                  ..createSync(recursive: true)
+                  ..writeAsBytesSync(png);
+              }
             }
           }
         }

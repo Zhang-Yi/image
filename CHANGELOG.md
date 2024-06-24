@@ -1,6 +1,131 @@
-## 2.1.9+1
+## 3.2.2 - October 15, 2022
+
+- Fix transparency issue with animated GIF images.
+
+## 3.2.1 - October 15, 2022
+
+- Fixes for APNG: fix exception from some APNG files, and some frames were not composited correctly.
+
+## 3.2.0 - May 18, 2022
+
+- Update SDK dependency to >2.15.0 and XML package dependency to >6.0.0
+
+## 3.1.3 - February 17, 2022
+
+- Optimize Image.getWhiteBalance function, add asDouble argument to return double value.
+
+## 3.1.2 - February 17, 2022
+
+- Add BmpEncoder to encode BMP images, along with encodeBmp function. Currently, only 24-bit or 32-bit BMP images will be encoded.
+
+## 3.1.1 - January 12, 2022
+
+- Fix error loading some tiff images
+- Fix jpeg comments to support non-strict utf8 text
+
+## 3.1.0 - November 30, 2021
+
+- Update archive version requirement
+- Fix JPGDecoder to return correct nullable types.
+
+## 3.0.8 - October 02, 2021
+
+- Fix WebP lossless decoder.
+
+## 3.0.7 - September 29, 2021
+
+- Change LICENSE to MIT.
+
+## 3.0.6 - September 29, 2021
+
+- Clean up LICENSE file, moving other license references to LICENSE-other.
+
+## 3.0.5
+
+- Fix copyResize for landscape oriented images.
+
+## 3.0.4
+
+- Fix Dart warnings from the previous release.
+
+## 3.0.3
+
+- Fix #320 - copyResize incorrectly applies linear and cubic.
+- Apply EXIF orientation when decoding JPEG images.
+
+## 3.0.2
+
+- Dithering support for GIF encoder.
+- Fix PNGEncoder issue if addFrame is called directly instead than encodeImage or encodeAnimation.
+- Optimization for drawImage.
+
+## 3.0.1
+
+- Improve NeuralQuantizer to fix issue encoding small GIF images.
+- Code cleanup resolving lint issues.
+
+## 3.0.0
+
+- Migrate to null safety.
+
+## 2.1.19 - November 11, 2020
+
+- Refactor HdrImage to better support more diverse formats, used for Hdr Tiff decoding.
+- TiffDecoder will maintain Tag data after decoding, allowing them to be read to process image metadata.
+- Added TiffEncoder. Still needs work to be able to add tag data to an encoded image.
+- Clean up print statements from BmpDecoder.
+
+## 2.1.18 - September 25, 2020
+
+- Added 64-bit float format to TIFF decoder.
+- Fixed issues with TiffDecoder.decodeHdrImage.
+- Added range clamping to copyCrop to avoid out-of-bound errors.
+- Variable FPS for animated GIF encoding.
+
+## 2.1.17 - September 20, 2020
+
+- Added 32-bit float and 16-bit half-float formats to the TIFF decoder.
+
+## 2.1.16 - September 19, 2020
+
+- Downgrade Meta dependency to be compatible with flutter_test in the stable channel.
+
+## 2.1.15 - September 13, 2020
+
+- Fix Image.getBytes for cropping images
+- Fix bakeOrientation EXIF data
+- Added ICO format decoder
+- Fix JpegData.validate for unintended exceptions with non jpeg images
+
+## 2.1.14 - June 14, 2020
+
+- Update xml dependency to 4.2.0
+
+## 2.1.13 - May 21, 2020
+
+- Improvements for JPEG EXIF decoding
+- Fix for the GIF animation decoder
+- APNG encoder time delay correctly to milliseconds
+
+## 2.1.12 - January 14, 2020
+
+- drawChar now uses color parameter.
+- Fix index out of range bug in drawImage.
+- Fix transparency with animated WebP images.
+
+
+## 2.1.11 - December 30, 2019
+
+- Fix GIF animation loopCount encoding. Some viewers were not seeing the repeat count correctly.
+- Resolve analysis warnings.
+
+## 2.1.10 - December 04, 2019
 
 - Applied Pub's Health suggestions.
+- Optimize use of slow typed_data methods.
+- Add drawStringCentered function
+- Add fillCircle function
+- Fix drawLine thickness for axis-aligned lines
 
 ## 2.1.9 - November 15, 2019
 
@@ -28,7 +153,7 @@
 - Formatted package using `dartfmt`.
 - Fixed "Unnecessary new" and other Dart analyzer warnings.
 - Added the `samplingFactor` parameter to GIF encoding, which allows to significantly speed up
-  encoding times of GIF encoding. 
+  encoding times of GIF encoding.
 
 ## 2.1.4 - June 01, 2019
 
@@ -41,7 +166,7 @@
 ## 2.1.2 - May 25, 2019
 
 - Fix crash decoding some Jpeg images.
-- Fix infinite recursion crash with fillFlood when fill color is the same as the start pixel color. 
+- Fix infinite recursion crash with fillFlood when fill color is the same as the start pixel color.
 
 ## 2.1.1 - May 22, 2019
 
